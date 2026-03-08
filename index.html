@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MedMCQ — NEXT Prep</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#0d0d0d">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="MedMCQ">
+<link rel="apple-touch-icon" href="icon-192.png">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap');
+:root{--bg:#0d0d0d;--surface:#161616;--surface2:#1e1e1e;--border:#2a2a2a;--border2:#333;--text:#e8e8e8;--muted:#666;--muted2:#444;--accent:#e8ff47;--accent-dim:rgba(232,255,71,0.12);--accent-dim2:rgba(232,255,71,0.06);--red:#ff4757;--green:#2ed573;--blue:#3d9cf5;--orange:#ffa502;--correct-bg:rgba(46,213,115,0.08);--wrong-bg:rgba(255,71,87,0.08);--radius:6px;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min-height:100vh;overflow-x:hidden;}
+.layout{display:flex;min-height:100vh;}
+.sidebar{width:220px;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;padding:24px 0;position:fixed;top:0;left:0;bottom:0;z-index:10;}
+.sidebar-logo{font-family:'Bebas Neue',sans-serif;font-size:1.9rem;color:var(--accent);letter-spacing:0.04em;padding:0 20px 20px;border-bottom:1px solid var(--border);margin-bottom:16px;}
+.sidebar-logo span{font-size:0.65rem;color:var(--muted);display:block;font-family:'DM Sans',sans-serif;letter-spacing:0.1em;text-transform:uppercase;margin-top:2px;}
+.nav-section{font-size:0.58rem;text-transform:uppercase;letter-spacing:0.14em;color:var(--muted2);padding:8px 20px 6px;}
+.nav-item{display:flex;align-items:center;gap:10px;padding:9px 20px;cursor:pointer;font-size:0.82rem;color:var(--muted);transition:all 0.12s;border-left:3px solid transparent;}
+.nav-item:hover{color:var(--text);background:var(--surface2);}
+.nav-item.active{color:var(--accent);border-left-color:var(--accent);background:var(--accent-dim2);}
+.nav-icon{font-size:1rem;min-width:20px;text-align:center;}
+.sidebar-bottom{margin-top:auto;padding:16px 20px;border-top:1px solid var(--border);font-size:0.65rem;color:var(--muted);}
+.main{margin-left:220px;flex:1;padding:32px 28px;max-width:calc(100vw - 220px);}
+.section{display:none;}.section.active{display:block;}
+.page-header{margin-bottom:28px;padding-bottom:20px;border-bottom:1px solid var(--border);}
+.page-title{font-family:'Bebas Neue',sans-serif;font-size:2rem;color:var(--text);letter-spacing:0.04em;line-height:1;}
+.page-subtitle{font-size:0.75rem;color:var(--muted);margin-top:5px;}
+.free-badge{display:inline-block;background:rgba(46,213,115,0.15);color:var(--green);border:1px solid rgba(46,213,115,0.3);border-radius:10px;font-size:0.58rem;padding:2px 8px;letter-spacing:0.08em;text-transform:uppercase;margin-left:8px;vertical-align:middle;}
+.chips-wrap{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px;}
+.chip{background:var(--surface2);border:1px solid var(--border2);border-radius:20px;color:var(--muted);font-size:0.72rem;padding:6px 14px;cursor:pointer;transition:all 0.12s;font-family:'DM Sans',sans-serif;}
+.chip:hover{border-color:var(--accent);color:var(--text);}
+.chip.active{background:var(--accent-dim);border-color:var(--accent);color:var(--accent);}
+.controls-row{display:flex;gap:16px;flex-wrap:wrap;margin-bottom:24px;align-items:flex-end;}
+.ctrl-group label{display:block;font-size:0.62rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--muted);margin-bottom:7px;}
+.seg{display:flex;background:var(--surface2);border:1px solid var(--border2);border-radius:var(--radius);overflow:hidden;}
+.seg-btn{background:transparent;border:none;border-right:1px solid var(--border2);color:var(--muted);font-family:'DM Sans',sans-serif;font-size:0.75rem;padding:8px 14px;cursor:pointer;transition:all 0.12s;}
+.seg-btn:last-child{border-right:none;}
+.seg-btn:hover{color:var(--text);background:rgba(255,255,255,0.04);}
+.seg-btn.active{background:var(--accent);color:#0d0d0d;font-weight:600;}
+.gen-btn{background:var(--accent);border:none;border-radius:var(--radius);color:#0d0d0d;font-family:'Bebas Neue',sans-serif;font-size:1.05rem;letter-spacing:0.06em;padding:10px 28px;cursor:pointer;transition:opacity 0.15s,transform 0.1s;white-space:nowrap;align-self:flex-end;}
+.gen-btn:hover{opacity:0.85;transform:translateY(-1px);}
+.session-header{display:none;justify-content:space-between;align-items:center;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:12px 16px;margin-bottom:16px;font-size:0.75rem;}
+.session-header.show{display:flex;}
+.session-topic{color:var(--blue);font-weight:500;}
+.session-score{color:var(--accent);font-weight:600;font-size:0.9rem;}
+.prog-wrap{height:4px;background:var(--surface2);border-radius:2px;margin-bottom:20px;display:none;}
+.prog-wrap.show{display:block;}
+.prog-fill{height:100%;background:var(--accent);border-radius:2px;transition:width 0.4s ease;}
+.q-list{display:flex;flex-direction:column;gap:16px;}
+.q-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:20px;animation:slideUp 0.25s ease both;}
+@keyframes slideUp{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);}}
+.q-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;}
+.q-num{font-size:0.65rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.1em;}
+.badge{font-size:0.6rem;padding:3px 8px;border-radius:10px;text-transform:uppercase;letter-spacing:0.08em;font-weight:600;}
+.badge.easy{background:rgba(46,213,115,0.15);color:var(--green);}
+.badge.medium{background:rgba(255,165,2,0.15);color:var(--orange);}
+.badge.hard{background:rgba(255,71,87,0.15);color:var(--red);}
+.q-text{font-size:0.88rem;line-height:1.7;margin-bottom:14px;color:var(--text);}
+.opts{display:flex;flex-direction:column;gap:8px;}
+.opt-btn{background:var(--surface2);border:1px solid var(--border2);border-radius:var(--radius);color:var(--text);font-family:'DM Sans',sans-serif;font-size:0.8rem;padding:10px 14px;cursor:pointer;text-align:left;transition:all 0.12s;display:flex;gap:10px;align-items:flex-start;line-height:1.4;}
+.opt-letter{color:var(--muted);font-family:'DM Mono',monospace;font-size:0.72rem;min-width:18px;margin-top:1px;}
+.opt-btn:hover:not(:disabled){border-color:var(--blue);background:rgba(61,156,245,0.07);}
+.opt-btn.correct{border-color:var(--green);background:var(--correct-bg);color:var(--green);}
+.opt-btn.correct .opt-letter{color:var(--green);}
+.opt-btn.wrong{border-color:var(--red);background:var(--wrong-bg);color:var(--red);}
+.opt-btn.wrong .opt-letter{color:var(--red);}
+.opt-btn:disabled{cursor:default;}
+.explain{display:none;margin-top:12px;padding:12px 14px;background:rgba(61,156,245,0.06);border-left:3px solid var(--blue);border-radius:0 var(--radius) var(--radius) 0;font-size:0.76rem;line-height:1.65;color:var(--text);}
+.explain.show{display:block;}
+.explain strong{color:var(--blue);}
+.result-card{display:none;background:var(--surface);border:1px solid var(--border2);border-radius:12px;padding:32px;text-align:center;margin-top:20px;}
+.result-card.show{display:block;}
+.result-big{font-family:'Bebas Neue',sans-serif;font-size:3.5rem;color:var(--accent);line-height:1;margin-bottom:6px;}
+.result-label{font-size:0.75rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:16px;}
+.result-msg{font-size:0.85rem;color:var(--text);margin-bottom:20px;line-height:1.5;}
+.retry-btn{background:transparent;border:1px solid var(--accent);border-radius:var(--radius);color:var(--accent);font-family:'Bebas Neue',sans-serif;font-size:1rem;letter-spacing:0.06em;padding:10px 28px;cursor:pointer;transition:all 0.15s;}
+.retry-btn:hover{background:var(--accent-dim);}
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:14px;margin-bottom:28px;}
+.stat-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:18px;}
+.stat-val{font-family:'Bebas Neue',sans-serif;font-size:2.2rem;color:var(--accent);line-height:1;}
+.stat-label{font-size:0.65rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.1em;margin-top:4px;}
+.history-list{display:flex;flex-direction:column;gap:10px;}
+.history-item{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:12px 16px;display:flex;justify-content:space-between;align-items:center;font-size:0.78rem;}
+.history-topic{color:var(--text);}
+.history-meta{color:var(--muted);font-size:0.68rem;}
+.history-score{font-family:'DM Mono',monospace;font-weight:500;}
+.history-score.good{color:var(--green);}.history-score.ok{color:var(--orange);}.history-score.bad{color:var(--red);}
+.empty-state{text-align:center;padding:48px 0;color:var(--muted);font-size:0.8rem;}
+.mobile-toggle{display:none;position:fixed;top:14px;left:14px;z-index:100;background:var(--surface2);border:1px solid var(--border2);border-radius:var(--radius);color:var(--text);font-size:1.1rem;width:38px;height:38px;cursor:pointer;align-items:center;justify-content:center;}
+@media(max-width:680px){.sidebar{transform:translateX(-100%);transition:transform 0.25s ease;}.sidebar.open{transform:translateX(0);}.main{margin-left:0;max-width:100vw;padding:20px 16px;padding-top:60px;}.mobile-toggle{display:flex;}.page-title{font-size:1.6rem;}}
+</style>
+</head>
+<body>
+<button class="mobile-toggle" onclick="document.getElementById('sidebar').classList.toggle('open')">☰</button>
+<div class="layout">
+  <div class="sidebar" id="sidebar">
+    <div class="sidebar-logo">MedMCQ<span>NEXT / MBBS Prep</span></div>
+    <div class="nav-section">Practice</div>
+    <div class="nav-item active" onclick="showSection('practice',this)"><span class="nav-icon">⚡</span> Generate MCQs</div>
+    <div class="nav-section">Review</div>
+    <div class="nav-item" onclick="showSection('stats',this)"><span class="nav-icon">📊</span> My Stats</div>
+    <div class="sidebar-bottom">100% Free · Works Offline ✓</div>
+  </div>
+  <div class="main">
+    <div class="section active" id="sec-practice">
+      <div class="page-header">
+        <div class="page-title">Practice MCQs <span class="free-badge">Free</span></div>
+        <div class="page-subtitle">Pick a topic · set difficulty · start</div>
+      </div>
+      <div style="font-size:0.65rem;text-transform:uppercase;letter-spacing:0.12em;color:var(--muted);margin-bottom:8px;">Topics</div>
+      <div class="chips-wrap" id="chips"></div>
+      <div class="controls-row">
+        <div class="ctrl-group"><label>Difficulty</label>
+          <div class="seg" id="diff-seg">
+            <button class="seg-btn active" onclick="setDiff(this,'mixed')">Mixed</button>
+            <button class="seg-btn" onclick="setDiff(this,'easy')">Easy</button>
+            <button class="seg-btn" onclick="setDiff(this,'medium')">Medium</button>
+            <button class="seg-btn" onclick="setDiff(this,'hard')">Hard</button>
+          </div>
+        </div>
+        <div class="ctrl-group"><label>Questions</label>
+          <div class="seg" id="count-seg">
+            <button class="seg-btn" onclick="setCount(this,5)">5</button>
+            <button class="seg-btn active" onclick="setCount(this,10)">10</button>
+            <button class="seg-btn" onclick="setCount(this,15)">15</button>
+          </div>
+        </div>
+        <div class="ctrl-group"><label>&nbsp;</label>
+          <button class="gen-btn" onclick="generate()">▶ Start</button>
+        </div>
+      </div>
+      <div class="session-header" id="session-header">
+        <div>Topic: <span class="session-topic" id="s-topic"></span></div>
+        <div>Score: <span class="session-score" id="s-score">0</span> / <span id="s-total">0</span></div>
+      </div>
+      <div class="prog-wrap" id="prog-wrap"><div class="prog-fill" id="prog-fill" style="width:0%"></div></div>
+      <div class="q-list" id="q-list"></div>
+      <div class="result-card" id="result-card">
+        <div class="result-big" id="r-score">—</div>
+        <div class="result-label">Session Complete</div>
+        <div class="result-msg" id="r-msg"></div>
+        <button class="retry-btn" onclick="generate()">↺ New Session</button>
+      </div>
+    </div>
+    <div class="section" id="sec-stats">
+      <div class="page-header">
+        <div class="page-title">My Stats</div>
+        <div class="page-subtitle">Track your progress across sessions</div>
+      </div>
+      <div class="stats-grid" id="stats-grid"></div>
+      <div style="font-size:0.65rem;text-transform:uppercase;letter-spacing:0.12em;color:var(--muted);margin-bottom:10px;">Session History</div>
+      <div class="history-list" id="history-list"></div>
+    </div>
+  </div>
+</div>
+<script>
+const QB={
+"Heart Failure":[
+{q:"A 65-year-old man has breathlessness lying flat, bilateral ankle swelling and displaced apex beat. BNP is markedly elevated. Most likely diagnosis?",o:["Pulmonary embolism","Congestive cardiac failure","Nephrotic syndrome","Liver cirrhosis"],a:1,d:"medium",e:"Orthopnoea, bilateral oedema, displaced apex beat and elevated BNP are classic features of CCF. PE causes acute dyspnoea without peripheral oedema. Nephrotic and cirrhosis cause oedema but without cardiac signs."},
+{q:"First-line drug to reduce mortality in HFrEF:",o:["Furosemide","Digoxin","ACE inhibitor","Spironolactone"],a:2,d:"easy",e:"ACE inhibitors (ramipril, enalapril) are first-line mortality-reducing drugs in HFrEF. Furosemide relieves symptoms only. Digoxin reduces hospitalisation. Spironolactone is added as third-line."},
+{q:"Frank-Starling mechanism refers to:",o:["Increased HR compensating for low SV","Increased preload increasing stroke volume up to a point","Peripheral vasoconstriction maintaining BP","Ventricular hypertrophy improving contractility"],a:1,d:"medium",e:"Frank-Starling: as preload increases, stroke volume increases — up to a point. In failing heart the curve is flattened; further preload increase causes pulmonary congestion without improving SV."},
+{q:"Most specific CXR finding for left heart failure:",o:["Cardiomegaly","Kerley B lines","Pleural effusion","Upper lobe blood diversion"],a:1,d:"hard",e:"Kerley B lines (horizontal lines at lung bases from engorged lymphatics) are most specific for elevated PCWP. Cardiomegaly is sensitive but not specific. Upper lobe diversion appears early."},
+{q:"Drug that reduces hospitalisation but NOT mortality in CCF:",o:["Carvedilol","Sacubitril-valsartan","Digoxin","Eplerenone"],a:2,d:"hard",e:"Digoxin reduces symptoms and hospitalisation in HFrEF but does not reduce mortality (DIG trial). Beta-blockers, ACEi, ARBs, MRAs and ARNI all reduce mortality."},
+{q:"NYHA Class III heart failure means:",o:["No symptoms at any activity","Symptoms on moderate exertion","Symptoms on less-than-ordinary exertion","Symptoms at rest"],a:2,d:"easy",e:"NYHA: I=no limitation, II=slight limitation on ordinary activity, III=marked limitation on less-than-ordinary activity (comfortable at rest), IV=symptoms at rest."},
+{q:"Best biomarker for diagnosis and prognosis in heart failure:",o:["Troponin I","CRP","BNP/NT-proBNP","D-dimer"],a:2,d:"easy",e:"BNP and NT-proBNP are secreted by ventricular myocytes in response to wall stress. Most useful biomarkers for diagnosis, severity assessment and prognosis of heart failure."},
+{q:"HFpEF is characterised by:",o:["EF < 40%, dilated LV","EF > 50%, impaired relaxation","EF < 40%, hypertrophied LV","EF > 50%, mitral regurgitation"],a:1,d:"medium",e:"HFpEF = preserved EF (>50%) with impaired diastolic relaxation. Common in elderly hypertensive women. LV hypertrophied, not dilated. Treatment is symptomatic; no mortality-reducing drug proven."},
+{q:"Contraindication to beta-blockers in stable CHF:",o:["EF < 35%","Heart rate 55 bpm","Asthma","Mild ankle oedema"],a:2,d:"medium",e:"Asthma is a contraindication to beta-blockers. They are indicated in stable CHF (not acute decompensation) even with low EF and mild bradycardia."},
+{q:"Immediate treatment of acute pulmonary oedema:",o:["IV furosemide + oxygen + sit upright","Oral furosemide + bed rest","IV digoxin + oxygen","IM morphine alone"],a:0,d:"medium",e:"Acute pulmonary oedema: sit upright (reduces preload), high-flow O2, IV furosemide (vasodilation + diuresis). IV morphine/nitrates as adjuncts. Medical emergency."}
+],
+"Shock":[
+{q:"Trauma patient: BP 80/50, HR 130, cold clammy extremities, reduced urine output. Type of shock?",o:["Distributive","Cardiogenic","Hypovolaemic","Obstructive"],a:2,d:"easy",e:"Post-trauma with low BP, tachycardia, cold peripheries and oliguria = hypovolaemic shock. Distributive (septic) has warm peripheries. Cardiogenic has raised JVP. Obstructive has PE/tamponade signs."},
+{q:"Haemodynamic profile in septic shock:",o:["High CO, high SVR","Low CO, high SVR","High CO, low SVR","Low CO, low SVR"],a:2,d:"medium",e:"Septic/distributive shock: high CO (hyperdynamic), low SVR due to cytokine-mediated vasodilation. Cardiogenic and hypovolaemic shock: low CO, high SVR (compensatory vasoconstriction)."},
+{q:"First step in management of any shock:",o:["Start vasopressors","IV access and fluid resuscitation","Blood transfusion","Start antibiotics"],a:1,d:"easy",e:"Secure large-bore IV access and crystalloid bolus (500ml-1L) is always first. Then identify shock type and treat cause. Vasopressors added if fluids insufficient."},
+{q:"Vasopressor of choice in septic shock:",o:["Dopamine","Adrenaline","Noradrenaline","Vasopressin"],a:2,d:"medium",e:"Noradrenaline (alpha-1 agonist) causes vasoconstriction raising SVR, which is low in septic shock. First-line per Surviving Sepsis Campaign. Dopamine associated with more arrhythmias."},
+{q:"Beck's triad (hypotension, muffled heart sounds, raised JVP) suggests:",o:["Tension pneumothorax","Cardiac tamponade","Massive haemothorax","Aortic dissection"],a:1,d:"medium",e:"Beck's triad = cardiac tamponade (obstructive shock). Pericardial fluid compresses heart → low CO, raised JVP, muffled sounds. Treatment: pericardiocentesis."},
+{q:"Class II haemorrhagic shock: approximate blood loss:",o:["< 750 ml","750–1500 ml","1500–2000 ml","> 2000 ml"],a:1,d:"hard",e:"ATLS: Class I <750ml, Class II 750-1500ml (tachycardia, anxiety, normal BP), Class III 1500-2000ml (hypotension), Class IV >2000ml (life-threatening)."},
+{q:"Neurogenic shock is unique because:",o:["High BP and tachycardia","Bradycardia and hypotension with warm dry skin","Cold clammy skin","High SVR"],a:1,d:"medium",e:"Neurogenic shock: loss of sympathetic tone from spinal injury → vasodilation (warm dry skin), hypotension AND bradycardia. Unique — most other shocks cause tachycardia."},
+{q:"Drug of choice in anaphylactic shock:",o:["IV hydrocortisone","IV antihistamine","IM adrenaline 0.5mg (1:1000)","IV noradrenaline"],a:2,d:"easy",e:"IM adrenaline 0.5mg (1:1000) into outer thigh is first-line for anaphylaxis — reverses bronchospasm (B2), vasoconstriction (alpha-1), reduces mediator release. Steroids and antihistamines are adjuncts."},
+{q:"Crystalloid of choice for initial fluid resuscitation:",o:["5% Dextrose","0.9% Normal saline or Ringer's lactate","Albumin","Packed red cells"],a:1,d:"easy",e:"Isotonic crystalloids (NS or Ringer's/Hartmann's) first-line for resuscitation. Dextrose stays intravascular briefly. Colloids have no proven advantage. Blood is for haemorrhagic shock specifically."},
+{q:"Lactic acidosis in shock is due to:",o:["Hyperventilation","Anaerobic metabolism from tissue hypoperfusion","Renal failure","Liver dysfunction"],a:1,d:"medium",e:"Reduced O2 delivery → anaerobic glycolysis → lactic acid → metabolic acidosis. Lactate >2 mmol/L indicates inadequate perfusion and is a key marker of shock severity and treatment response."}
+],
+"Pulmonary Embolism":[
+{q:"30-year-old woman on OCP: sudden dyspnoea and pleuritic chest pain. D-dimer elevated. Most likely diagnosis?",o:["Pneumonia","Myocardial infarction","Pulmonary embolism","Spontaneous pneumothorax"],a:2,d:"easy",e:"OCP is a major PE risk factor. Sudden dyspnoea + pleuritic chest pain + elevated D-dimer = PE until proven otherwise. CTPA is gold standard investigation."},
+{q:"Most common ECG finding in PE:",o:["S1Q3T3 pattern","Sinus tachycardia","ST elevation V1-V4","Left bundle branch block"],a:1,d:"medium",e:"Sinus tachycardia is the MOST COMMON ECG finding in PE. S1Q3T3 is the 'classic' but not common sign — specific but insensitive. Most PE patients have only sinus tachycardia or a normal ECG."},
+{q:"Gold standard investigation for pulmonary embolism:",o:["Chest X-ray","D-dimer","CT pulmonary angiography","V/Q scan"],a:2,d:"easy",e:"CTPA is gold standard — high sensitivity and specificity, widely available. D-dimer rules out PE in low probability cases. V/Q scan used when CTPA contraindicated (renal failure, contrast allergy, pregnancy)."},
+{q:"Wells score for PE: Clinical signs of DVT scores:",o:["1 point","1.5 points","2 points","3 points"],a:3,d:"hard",e:"Wells score: DVT signs=3, alternative diagnosis less likely=3, HR>100=1.5, immobilisation/surgery=1.5, previous DVT/PE=1.5, haemoptysis=1, malignancy=1. Score >4=high probability."},
+{q:"Massive PE with haemodynamic instability: treatment?",o:["LMWH","Systemic thrombolysis (tPA)","Warfarin","Rivaroxaban"],a:1,d:"medium",e:"Massive PE with hypotension/shock = systemic thrombolysis (alteplase). NOACs and LMWH for non-massive PE. Surgical embolectomy if thrombolysis fails or contraindicated."},
+{q:"Hampton's hump on CXR represents:",o:["Dilated pulmonary artery","Wedge-shaped pleural-based opacity — pulmonary infarction","Pleural effusion","Elevated hemidiaphragm"],a:1,d:"hard",e:"Hampton's hump = wedge-shaped peripheral opacity with apex pointing to hilum — pulmonary infarction. Westermark sign = focal oligaemia. Most PE patients have a NORMAL CXR."},
+{q:"D-dimer is useful for:",o:["Confirming PE","Monitoring anticoagulation","Ruling out PE in low pre-test probability","Assessing clot burden"],a:2,d:"easy",e:"D-dimer: high sensitivity, low specificity. Use to RULE OUT PE when pre-test probability is LOW. Normal D-dimer + low Wells score = PE effectively excluded without further imaging."},
+{q:"Duration of anticoagulation after first provoked PE:",o:["6 weeks","3 months","6 months","Lifelong"],a:1,d:"medium",e:"First provoked PE (surgery, immobilisation): 3 months anticoagulation. Unprovoked PE: 3-6 months, consider extended therapy. Recurrent or cancer-associated: lifelong."},
+{q:"McConnell's sign on echo in massive PE is:",o:["Dilated LV with reduced EF","RV free wall akinesia with normal apical motion","D-shaped LV","Pericardial effusion"],a:1,d:"hard",e:"McConnell's sign = RV free wall akinesia with preserved or hyperkinetic RV apex — highly specific for acute PE. D-sign (flattened IVS) indicates RV pressure overload."},
+{q:"Prophylaxis against PE in hospitalised patients includes:",o:["Aspirin alone","LMWH (e.g. enoxaparin) + compression stockings","Warfarin","Full-dose heparin infusion"],a:1,d:"medium",e:"VTE prophylaxis: LMWH (enoxaparin 40mg SC daily) + graduated compression stockings for all hospitalised medical/surgical patients at risk. Risk-assess using Padua or Caprini scores."}
+],
+"Myocardial Infarction":[
+{q:"Crushing central chest pain radiating to left arm, ECG: ST elevation V1-V4. Diagnosis?",o:["Unstable angina","NSTEMI","Anterior STEMI","Aortic dissection"],a:2,d:"easy",e:"ST elevation V1-V4 = anterior STEMI (LAD territory). Immediate reperfusion: primary PCI within 90 minutes or thrombolysis if PCI unavailable."},
+{q:"Most common artery in inferior MI:",o:["LAD","Left circumflex","Right coronary artery","Left main stem"],a:2,d:"easy",e:"Inferior MI (ST elevation II, III, aVF) = RCA in ~80%. RCA supplies inferior wall and AV/SA nodes → inferior MI can cause bradycardia and AV blocks."},
+{q:"Earliest ECG change in acute STEMI:",o:["ST elevation","Pathological Q wave","Hyperacute T wave","LBBB"],a:2,d:"hard",e:"Hyperacute tall, broad, peaked T waves occur within minutes of occlusion — earliest change. ST elevation follows. Q waves develop hours later indicating irreversible necrosis."},
+{q:"Troponin in STEMI peaks at:",o:["2-4 hours","12-24 hours","48-72 hours","7 days"],a:1,d:"medium",e:"Troponin rises 3-6h after MI, peaks at 12-24h, returns to normal in 7-14 days. Most sensitive and specific cardiac biomarker. CK-MB peaks earlier (10-24h) and normalises in 48-72h."},
+{q:"Dressler's syndrome is:",o:["Re-infarction","Post-MI autoimmune pericarditis, 2-10 weeks later","Pulmonary embolism post-MI","Ventricular aneurysm rupture"],a:1,d:"medium",e:"Dressler's syndrome: autoimmune pericarditis 2-10 weeks post-MI. Features: fever, pleuritic pain, pericardial rub, elevated ESR/CRP. Treatment: NSAIDs + colchicine."},
+{q:"Most common cause of death in the first hour of acute MI:",o:["Cardiogenic shock","Ventricular fibrillation","Cardiac tamponade","Papillary muscle rupture"],a:1,d:"medium",e:"VF is the most common cause of pre-hospital death in acute MI — hence the importance of early defibrillation and community AED access. In-hospital deaths are more often from cardiogenic shock."},
+{q:"Primary PCI preferred over thrombolysis when:",o:["Patient presents > 12 hours","Door-to-balloon time ≤90 mins achievable","Patient has active bleeding","ECG shows NSTEMI"],a:1,d:"medium",e:"Primary PCI preferred if door-to-balloon ≤90 mins (or ≤120 mins from first medical contact). Thrombolysis if PCI not available within this window. PCI has better outcomes and less stroke risk."},
+{q:"New pansystolic murmur on day 3-5 post-MI suggests:",o:["Dressler's syndrome","VSD or papillary muscle rupture","Pericarditis","LV aneurysm"],a:1,d:"hard",e:"New pansystolic murmur day 3-5 = mechanical complication: VSD (septal rupture — harsh murmur at LSE) or acute MR (papillary muscle rupture — softer at apex). Both require urgent surgery."},
+{q:"Aspirin loading dose in acute MI:",o:["75 mg","150 mg","300 mg","500 mg"],a:2,d:"easy",e:"Loading dose 300mg aspirin (chewed for rapid absorption) in acute MI. Maintenance: 75mg daily. Dual antiplatelet (aspirin + P2Y12 inhibitor) for at least 12 months post-PCI."},
+{q:"Killip class IV in acute MI means:",o:["No heart failure","Mild heart failure — S3 gallop","Pulmonary oedema","Cardiogenic shock"],a:3,d:"hard",e:"Killip classification: I=no HF, II=mild HF (S3, basal crackles), III=pulmonary oedema, IV=cardiogenic shock (BP<90, oliguria, cyanosis). Killip IV has ~80% mortality without intervention."}
+],
+"ECG Interpretation":[
+{q:"PR interval represents:",o:["Ventricular depolarisation","AV nodal conduction time","Ventricular repolarisation","Atrial repolarisation"],a:1,d:"easy",e:"PR interval = onset of atrial depolarisation to onset of ventricular depolarisation. Normal = 120-200ms (3-5 small squares). Prolonged PR >200ms = 1st degree AV block."},
+{q:"HR calculation: RR interval = 4 large squares. HR is?",o:["60 bpm","75 bpm","100 bpm","50 bpm"],a:1,d:"easy",e:"300 ÷ large squares between R waves = HR. 300 ÷ 4 = 75 bpm. Memorise: 1=300, 2=150, 3=100, 4=75, 5=60, 6=50."},
+{q:"LBBB pattern on ECG:",o:["RSR' in V1, S wave in V6","Broad notched R in I, aVL, V5-V6; deep S in V1","Right axis deviation","Short PR interval"],a:1,d:"medium",e:"LBBB: broad notched M-shaped R in lateral leads (I, aVL, V5-V6); deep broad S in V1. QRS >120ms. New LBBB with chest pain = treat as STEMI equivalent. WiLLiaM MaRRoW: W in V1=LBBB, M in V1=RBBB."},
+{q:"Atrial fibrillation on ECG:",o:["Regular rhythm, no P waves","Irregularly irregular rhythm, absent P waves","Regular sawtooth flutter waves","Broad complex tachycardia"],a:1,d:"easy",e:"AF: irregularly irregular RR intervals + absent P waves + fibrillatory baseline. Rate 100-180 bpm. Most common sustained arrhythmia. Risks: stroke (CHA2DS2-VASc score)."},
+{q:"Prolonged QTc increases risk of:",o:["AF","Torsades de Pointes","Complete heart block","Ischaemic VF"],a:1,d:"medium",e:"Prolonged QTc (>440ms men, >460ms women) → Torsades de Pointes (polymorphic VT) → can degenerate to VF. Causes: drugs (antiarrhythmics, antipsychotics), hypokalaemia, hypomagnesaemia, congenital LQTS."},
+{q:"Delta wave on ECG indicates:",o:["1st degree AV block","Wolff-Parkinson-White syndrome","RBBB","Hyperkalaemia"],a:1,d:"medium",e:"Delta wave = slurred QRS upstroke from accessory pathway (Bundle of Kent). WPW: short PR + delta wave + broad QRS. Avoid AV nodal blockers in WPW with AF — can cause rapid conduction via accessory pathway → VF."},
+{q:"Tall peaked T waves with widened QRS suggests:",o:["Hypocalcaemia","Hyperkalaemia","Digoxin toxicity","Hyponatraemia"],a:1,d:"medium",e:"Hyperkalaemia ECG: peaked T → lost P waves → wide QRS → sine wave → VF. Emergency: IV calcium gluconate (membrane stabilisation), insulin-dextrose, salbutamol, consider dialysis."},
+{q:"Widespread saddle-shaped ST elevation in all leads (except aVR) suggests:",o:["STEMI","Pericarditis","Myocarditis","Normal variant"],a:1,d:"medium",e:"Pericarditis: diffuse saddle-shaped ST elevation + PR depression. Unlike STEMI, not confined to one coronary territory. Treat with NSAIDs + colchicine. Avoid in post-MI pericarditis."},
+{q:"S1Q3T3 pattern is associated with:",o:["Inferior MI","Pulmonary embolism","Left ventricular hypertrophy","Hyperkalaemia"],a:1,d:"medium",e:"S1Q3T3 = S wave in lead I, Q wave and T inversion in lead III — classic sign of acute right heart strain in PE. Specific but insensitive. Sinus tachycardia is still the MOST COMMON ECG finding in PE."},
+{q:"Wenckebach (Mobitz I) AV block shows:",o:["Constant PR with dropped beats","Progressively lengthening PR until a beat is dropped","Complete AV dissociation","2:1 P to QRS ratio"],a:1,d:"medium",e:"Mobitz I (Wenckebach): PR interval progressively lengthens until a QRS is dropped, then cycle resets. Usually benign, often inferior MI or increased vagal tone. Mobitz II is more dangerous."}
+],
+"Hypertension":[
+{q:"Hypertension is defined as BP ≥:",o:["130/80 mmHg","140/90 mmHg","150/90 mmHg","160/100 mmHg"],a:1,d:"easy",e:"WHO and most guidelines: HTN = BP ≥140/90 mmHg on repeated measurements. ACC/AHA 2017 uses 130/80. For NEXT exams, 140/90 is the standard threshold."},
+{q:"Most common cause of secondary hypertension:",o:["Primary aldosteronism","Renal parenchymal disease","Phaeochromocytoma","Cushing's syndrome"],a:1,d:"medium",e:"Renal parenchymal disease (CKD) is most common cause of secondary HTN (~80%). Primary aldosteronism is most common endocrine cause. Investigate all young patients or resistant HTN."},
+{q:"Drug of choice for hypertension in pregnancy:",o:["ACE inhibitor","Beta blocker","Methyldopa","ARB"],a:2,d:"easy",e:"Methyldopa is safest for chronic HTN in pregnancy. Labetalol and nifedipine are alternatives. ACE inhibitors and ARBs are CONTRAINDICATED — teratogenic (foetal renal agenesis)."},
+{q:"Hypertensive emergency differs from urgency by:",o:["BP level","Presence of acute target organ damage","Symptoms alone","Rate of BP rise"],a:1,d:"medium",e:"Hypertensive emergency: BP >180/120 WITH acute target organ damage (encephalopathy, AKI, acute HF, dissection, retinal haemorrhage). Urgency = same BP without organ damage. Emergency requires IV treatment in ICU."},
+{q:"Best antihypertensive for HTN with diabetic nephropathy:",o:["Amlodipine","Thiazide diuretic","ACE inhibitor/ARB","Beta blocker"],a:2,d:"easy",e:"ACEi/ARB reduces intraglomerular pressure, proteinuria and slows CKD progression — beyond BP lowering alone. Drug of choice in HTN + diabetic nephropathy. Avoid in bilateral renal artery stenosis."},
+{q:"Keith-Wagener Grade IV hypertensive retinopathy includes:",o:["Arterial narrowing only","AV nipping","Haemorrhages + cotton wool spots","Grade III changes + papilloedema"],a:3,d:"hard",e:"Keith-Wagener: I=arterial narrowing, II=AV nipping, III=flame haemorrhages + cotton wool spots, IV=Grade III + papilloedema = malignant hypertension. Medical emergency requiring controlled BP reduction."},
+{q:"Isolated systolic hypertension in elderly: best treatment?",o:["ACE inhibitor","Beta blocker","Thiazide diuretic or long-acting CCB","ARB"],a:2,d:"medium",e:"Thiazides and long-acting CCBs (amlodipine) most effective for isolated systolic HTN in elderly. HYVET trial used indapamide ± perindopril. Beta blockers less effective in elderly."}
+],
+"Anaemia":[
+{q:"Microcytic anaemia (low MCV) is caused by:",o:["B12 deficiency","Folate deficiency","Iron deficiency","Haemolytic anaemia"],a:2,d:"easy",e:"Microcytic (low MCV): Iron deficiency, thalassaemia, sideroblastic anaemia. Macrocytic: B12/folate deficiency, liver disease, hypothyroidism. Normocytic: ACD, haemolytic, aplastic anaemia."},
+{q:"Pernicious anaemia results from deficiency of:",o:["Dietary B12","Intrinsic factor from gastric parietal cells","Folate","Transcobalamin II"],a:1,d:"medium",e:"Pernicious anaemia: autoimmune destruction of parietal cells → intrinsic factor deficiency → B12 malabsorption in terminal ileum → megaloblastic anaemia. Anti-IF antibodies are specific. Treat with IM B12."},
+{q:"Koilonychia (spoon-shaped nails) is a feature of:",o:["B12 deficiency","Iron deficiency anaemia","Haemolytic anaemia","Aplastic anaemia"],a:1,d:"easy",e:"Iron deficiency features: koilonychia, angular stomatitis, glossitis, dysphagia (Plummer-Vinson). Lab: low Hb, MCV, ferritin, serum iron; high TIBC; hypochromic microcytic film."},
+{q:"Direct Coombs test is positive in:",o:["Iron deficiency anaemia","Autoimmune haemolytic anaemia","G6PD deficiency","Thalassaemia"],a:1,d:"medium",e:"Direct Coombs (DAT): detects antibodies ON red cells. Positive in autoimmune haemolytic anaemia, haemolytic transfusion reactions, HDN. Indirect Coombs: antibodies in serum (pre-transfusion screening)."},
+{q:"Tear-drop cells (dacrocytes) on blood film suggest:",o:["Iron deficiency","Myelofibrosis","Sickle cell disease","Vitamin B12 deficiency"],a:1,d:"hard",e:"Tear-drop cells (dacrocytes) = RBCs squeezed through fibrotic marrow → myelofibrosis. Other film findings in myelofibrosis: leukoerythroblastic picture (nucleated RBCs + immature WBCs). Massive splenomegaly."}
+],
+"Diabetes Mellitus":[
+{q:"Diagnostic fasting plasma glucose for diabetes:",o:["≥ 6.1 mmol/L","≥ 7.0 mmol/L","≥ 7.8 mmol/L","≥ 11.1 mmol/L"],a:1,d:"easy",e:"WHO criteria: Fasting PG ≥7.0 mmol/L (126 mg/dL), OR 2h OGTT ≥11.1 mmol/L, OR random PG ≥11.1 with symptoms, OR HbA1c ≥6.5%. Confirm on second occasion if asymptomatic."},
+{q:"HbA1c reflects blood glucose over:",o:["2 weeks","1 month","2-3 months","6 months"],a:2,d:"easy",e:"HbA1c reflects mean glucose over 2-3 months (RBC lifespan ~120 days). Target: <7% (53 mmol/mol) in most T2DM. Falsely low in haemolytic anaemia; falsely high in iron deficiency."},
+{q:"Metformin primary mechanism of action:",o:["Stimulates insulin secretion","Reduces hepatic glucose production","Inhibits alpha-glucosidase","Increases GLP-1 levels"],a:1,d:"medium",e:"Metformin: primarily reduces hepatic gluconeogenesis via AMPK activation, + improves peripheral insulin sensitivity. No hypoglycaemia or weight gain. Contraindicated: eGFR <30, contrast media, severe hepatic disease."},
+{q:"DKA triad:",o:["Hypoglycaemia, metabolic alkalosis, ketonuria","Hyperglycaemia, metabolic acidosis, ketonaemia","Hyperglycaemia, metabolic alkalosis, hyponatraemia","Hyperosmolarity, no ketones, acidosis"],a:1,d:"easy",e:"DKA: hyperglycaemia (usually >11 mmol/L) + metabolic acidosis (pH <7.3) + ketonaemia (≥3 mmol/L). Mainly T1DM. Treat: IV fluids, fixed-rate insulin infusion, potassium replacement."},
+{q:"Most common precipitant of DKA:",o:["Eating too much sugar","Infection or missed insulin","Excess alcohol","Renal failure"],a:1,d:"easy",e:"Infection (UTI, pneumonia) is most common precipitant, followed by missed/insufficient insulin. Insulin requirements INCREASE during illness — sick day rules are critical for T1DM patients."}
+],
+"Thyroid Disorders":[
+{q:"Most common cause of hypothyroidism in iodine-sufficient countries:",o:["Iodine deficiency","Hashimoto's thyroiditis","Post-radioiodine","Pituitary failure"],a:1,d:"medium",e:"In iodine-sufficient countries (UK, US): Hashimoto's (autoimmune) is most common. Worldwide: iodine deficiency. In India both are relevant. Anti-TPO and anti-thyroglobulin antibodies in Hashimoto's."},
+{q:"TFTs in primary hypothyroidism:",o:["Low TSH, low T4","High TSH, low T4","Low TSH, high T4","Normal TSH, low T4"],a:1,d:"easy",e:"Primary hypothyroidism: thyroid fails → low T4 → pituitary increases TSH (lost negative feedback) → HIGH TSH + LOW T4. Secondary (pituitary failure): low TSH + low T4."},
+{q:"Graves' disease is caused by:",o:["Anti-TPO antibodies","TSH receptor stimulating antibodies (TRAb)","Anti-thyroglobulin antibodies","Iodine deficiency"],a:1,d:"medium",e:"Graves' disease: TRAb stimulates TSH receptor → hyperthyroidism + diffuse goitre. Unique features: exophthalmos, pretibial myxoedema (not seen in other hyperthyroid causes). Treat: carbimazole, radioiodine, surgery."},
+{q:"Thyroid storm management:",o:["Radioiodine alone","PTU + beta blocker + Lugol's iodine + hydrocortisone","Emergency thyroidectomy","Levothyroxine"],a:1,d:"hard",e:"Thyroid storm: PTU (blocks synthesis + T4→T3 conversion) + beta blocker (symptoms) + Lugol's iodine (given 1h AFTER PTU, blocks release) + hydrocortisone (prevents relative adrenal insufficiency)."}
+],
+"Vitamin Deficiencies":[
+{q:"Vitamin B1 (Thiamine) deficiency causes:",o:["Pellagra","Beriberi and Wernicke's encephalopathy","Scurvy","Rickets"],a:1,d:"easy",e:"Thiamine deficiency: Beriberi (wet=cardiac failure+oedema, dry=peripheral neuropathy) and Wernicke's encephalopathy (confusion, ataxia, ophthalmoplegia). Give IV thiamine BEFORE glucose in alcoholics."},
+{q:"Scurvy (Vitamin C deficiency) features:",o:["Night blindness","Perifollicular haemorrhages, gum bleeding, corkscrew hairs","Bowing of legs","Pellagra rash"],a:1,d:"easy",e:"Scurvy: perifollicular haemorrhages, gum bleeding/swelling, corkscrew hairs, poor wound healing, anaemia. Vit C required for collagen synthesis (hydroxylation of proline/lysine)."},
+{q:"Pellagra is caused by deficiency of:",o:["Vitamin B1","Vitamin B2","Vitamin B3 (Niacin)","Vitamin B6"],a:2,d:"easy",e:"Pellagra = Niacin (B3) deficiency. Classic 4 Ds: Dermatitis (sun-exposed), Diarrhoea, Dementia, Death. Casal's necklace rash. Common in maize-eating populations (maize lacks tryptophan, niacin precursor)."},
+{q:"Vitamin D deficiency in adults causes:",o:["Rickets","Osteomalacia","Scurvy","Night blindness"],a:1,d:"easy",e:"Vit D deficiency: Rickets in children (bowing of legs, rachitic rosary, Harrison's sulcus), Osteomalacia in adults (bone pain, proximal myopathy, Looser's zones on X-ray). Treat with Vit D + calcium."},
+{q:"Night blindness is caused by deficiency of:",o:["Vitamin A","Vitamin D","Vitamin E","Vitamin K"],a:0,d:"easy",e:"Vitamin A deficiency: night blindness (earliest sign), Bitot's spots, corneal ulceration → keratomalacia → blindness. Also causes follicular hyperkeratosis. Common in developing countries."}
+]
+};
+
+let selectedTopic='',difficulty='mixed',qCount=10,sessionQs=[],answered={},score=0;
+const LS={get:k=>{try{return JSON.parse(localStorage.getItem(k));}catch{return null;}},set:(k,v)=>localStorage.setItem(k,JSON.stringify(v))};
+
+window.onload=()=>{
+  const chips=document.getElementById('chips');
+  chips.innerHTML=Object.keys(QB).map(t=>`<div class="chip" onclick="pickTopic(this,'${t}')">${t}</div>`).join('');
+};
+
+function pickTopic(el,topic){document.querySelectorAll('.chip').forEach(c=>c.classList.remove('active'));el.classList.add('active');selectedTopic=topic;}
+function setDiff(el,val){document.getElementById('diff-seg').querySelectorAll('.seg-btn').forEach(b=>b.classList.remove('active'));el.classList.add('active');difficulty=val;}
+function setCount(el,val){document.getElementById('count-seg').querySelectorAll('.seg-btn').forEach(b=>b.classList.remove('active'));el.classList.add('active');qCount=val;}
+
+function showSection(id,el){
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  document.getElementById('sec-'+id).classList.add('active');
+  el.classList.add('active');
+  if(id==='stats')renderStats();
+  document.getElementById('sidebar').classList.remove('open');
+}
+
+function generate(){
+  if(!selectedTopic){alert('Please select a topic first!');return;}
+  answered={};score=0;
+  document.getElementById('q-list').innerHTML='';
+  document.getElementById('result-card').classList.remove('show');
+  document.getElementById('session-header').classList.remove('show');
+  document.getElementById('prog-wrap').classList.remove('show');
+
+  let pool=[...(QB[selectedTopic]||[])];
+  if(difficulty!=='mixed'){const f=pool.filter(q=>q.d===difficulty);if(f.length>=3)pool=f;}
+  pool=pool.sort(()=>Math.random()-0.5).slice(0,qCount);
+  sessionQs=pool;
+
+  document.getElementById('s-topic').textContent=selectedTopic;
+  document.getElementById('s-score').textContent='0';
+  document.getElementById('s-total').textContent=sessionQs.length;
+  document.getElementById('session-header').classList.add('show');
+  document.getElementById('prog-wrap').classList.add('show');
+  document.getElementById('prog-fill').style.width='0%';
+
+  const list=document.getElementById('q-list');
+  const L=['A','B','C','D'];
+  sessionQs.forEach((q,qi)=>{
+    const card=document.createElement('div');
+    card.className='q-card';
+    card.style.animationDelay=qi*0.05+'s';
+    card.innerHTML=`<div class="q-top"><span class="q-num">Q${qi+1} / ${sessionQs.length}</span><span class="badge ${q.d}">${q.d}</span></div>
+    <div class="q-text">${q.q}</div>
+    <div class="opts" id="opts-${qi}">${q.o.map((o,oi)=>`<button class="opt-btn" onclick="choose(${qi},${oi})" id="opt-${qi}-${oi}"><span class="opt-letter">${L[oi]}</span><span>${o}</span></button>`).join('')}</div>
+    <div class="explain" id="exp-${qi}"><strong>Explanation:</strong> ${q.e}</div>`;
+    list.appendChild(card);
+  });
+  list.scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+function choose(qi,oi){
+  if(answered[qi]!==undefined)return;
+  answered[qi]=oi;
+  const q=sessionQs[qi];
+  for(let i=0;i<q.o.length;i++){
+    const btn=document.getElementById(`opt-${qi}-${i}`);
+    btn.disabled=true;
+    if(i===q.a)btn.classList.add('correct');
+    if(i===oi&&oi!==q.a)btn.classList.add('wrong');
+  }
+  document.getElementById(`exp-${qi}`).classList.add('show');
+  if(oi===q.a)score++;
+  document.getElementById('s-score').textContent=score;
+  const pct=(Object.keys(answered).length/sessionQs.length)*100;
+  document.getElementById('prog-fill').style.width=pct+'%';
+  if(Object.keys(answered).length===sessionQs.length){saveHistory();showResult();}
+}
+
+function showResult(){
+  const total=sessionQs.length,pct=Math.round(score/total*100);
+  const msgs=[[80,'Excellent! Strong command of this topic. 🔥'],[60,'Good effort. Review the explanations above.'],[40,'Needs work. Study each explanation carefully.'],[0,'This topic needs focused revision. Start from basics.']];
+  const msg=msgs.find(([t])=>pct>=t)[1];
+  document.getElementById('r-score').textContent=`${score}/${total}`;
+  document.getElementById('r-msg').textContent=msg;
+  setTimeout(()=>{document.getElementById('result-card').classList.add('show');document.getElementById('result-card').scrollIntoView({behavior:'smooth',block:'center'});},300);
+}
+
+function saveHistory(){
+  const h=LS.get('medmcq_history')||[];
+  h.unshift({topic:selectedTopic,score,total:sessionQs.length,pct:Math.round(score/sessionQs.length*100),date:new Date().toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'}),diff:difficulty});
+  LS.set('medmcq_history',h.slice(0,50));
+}
+
+function renderStats(){
+  const history=LS.get('medmcq_history')||[];
+  if(!history.length){
+    document.getElementById('stats-grid').innerHTML='';
+    document.getElementById('history-list').innerHTML='<div class="empty-state">No sessions yet.<br>Complete a session to see your stats.</div>';
+    return;
+  }
+  const totalQ=history.reduce((a,h)=>a+h.total,0);
+  const totalC=history.reduce((a,h)=>a+h.score,0);
+  document.getElementById('stats-grid').innerHTML=`
+    <div class="stat-card"><div class="stat-val">${history.length}</div><div class="stat-label">Sessions</div></div>
+    <div class="stat-card"><div class="stat-val">${totalQ}</div><div class="stat-label">Questions</div></div>
+    <div class="stat-card"><div class="stat-val">${Math.round(totalC/totalQ*100)}%</div><div class="stat-label">Avg Score</div></div>
+    <div class="stat-card"><div class="stat-val">${Math.max(...history.map(h=>h.pct))}%</div><div class="stat-label">Best Score</div></div>`;
+  document.getElementById('history-list').innerHTML=history.map(h=>{
+    const cls=h.pct>=80?'good':h.pct>=60?'ok':'bad';
+    return `<div class="history-item"><div><div class="history-topic">${h.topic}</div><div class="history-meta">${h.date} · ${h.diff} · ${h.total} Qs</div></div><div class="history-score ${cls}">${h.score}/${h.total} (${h.pct}%)</div></div>`;
+  }).join('');
+}
+</script>
+<script>if('serviceWorker'in navigator){window.addEventListener('load',()=>{navigator.serviceWorker.register('/sw.js').catch(()=>{});});}</script>
+</body>
+</html>
